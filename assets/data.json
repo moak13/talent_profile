@@ -1,0 +1,51 @@
+{
+    "name": "Arun Arora",
+    "profession": "Graphic Designer",
+    "location": "Mumbai",
+    "price": 12,
+    "rate": 4,
+    "bio": {
+        "description": "dshdjnbjbshndfsdbsjbdjnjdhnjdbjnvdljknjndvsvhbjbhdbzjdbhbhzkjbvhbuizjbjdnvjshizvkjbs"
+    },
+    "work": [
+        {
+            "name": "Amazon",
+            "description": "Amazon description"
+        },
+        {
+            "name": "Facebook",
+            "description": "Facebook description"
+        },
+        {
+            "name": "Uber",
+            "description": "Uber description"
+        },
+        {
+            "name": "Netflix",
+            "description": "Netflix description"
+        },
+        {
+            "name": "Google",
+            "description": "Google description"
+        }
+    ],
+    "skills": [
+        {
+            "name": "Designing"
+        },
+        {
+            "name": "Photoshop"
+        },
+        {
+            "name": "CSS"
+        },
+        {
+            "name": "CSS"
+        }
+    ],
+    "review": {
+        "author": "Alexander",
+        "description": "jcjndbcbhsdbjbhvcsnjkbhnsvdjblnsvjdvbhbjvsdjndhbvkjndvbksbdlzjdbbnzljvdbbzjjnj",
+        "rate": 4
+    }
+}
