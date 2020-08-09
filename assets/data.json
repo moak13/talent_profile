@@ -1,51 +1,57 @@
 {
-    "name": "Arun Arora",
-    "profession": "Graphic Designer",
-    "location": "Mumbai",
-    "price": 12,
-    "rate": 4,
-    "bio": {
-        "description": "dshdjnbjbshndfsdbsjbdjnjdhnjdbjnvdljknjndvsvhbjbhdbzjdbhbhzkjbvhbuizjbjdnvjshizvkjbs"
+  "name": "Arun Arora",
+  "profession": "Graphic Designer",
+  "location": "Mumbai",
+  "price": 12,
+  "rate": 4,
+  "bio": {
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam,magna sed do eiusmod"
+  },
+  "work": [
+    {
+      "name": "Amazon",
+      "description": "Amazon description"
     },
-    "work": [
-        {
-            "name": "Amazon",
-            "description": "Amazon description"
-        },
-        {
-            "name": "Facebook",
-            "description": "Facebook description"
-        },
-        {
-            "name": "Uber",
-            "description": "Uber description"
-        },
-        {
-            "name": "Netflix",
-            "description": "Netflix description"
-        },
-        {
-            "name": "Google",
-            "description": "Google description"
-        }
-    ],
-    "skills": [
-        {
-            "name": "Designing"
-        },
-        {
-            "name": "Photoshop"
-        },
-        {
-            "name": "CSS"
-        },
-        {
-            "name": "CSS"
-        }
-    ],
-    "review": {
-        "author": "Alexander",
-        "description": "jcjndbcbhsdbjbhvcsnjkbhnsvdjblnsvjdvbhbjvsdjndhbvkjndvbksbdlzjdbbnzljvdbbzjjnj",
-        "rate": 4
+    {
+      "name": "Facebook",
+      "description": "Facebook description"
+    },
+    {
+      "name": "Uber",
+      "description": "Uber description"
+    },
+    {
+      "name": "Netflix",
+      "description": "Netflix description"
+    },
+    {
+      "name": "Google",
+      "description": "Google description"
     }
+  ],
+  "skills": [
+    {
+      "name": "Designing"
+    },
+    {
+      "name": "Photoshop"
+    },
+    {
+      "name": "CSS"
+    },
+    {
+      "name": "Flutter"
+    },
+    {
+      "name": "Javascript"
+    },
+    {
+      "name": "HTML"
+    }
+  ],
+  "review": {
+    "author": "Alexander",
+    "description": "'Lorem ipsum dolor sit amet,consectetur adipiscing elit, sed do eiusmod tempor ",
+    "rate": 4
+  }
 }

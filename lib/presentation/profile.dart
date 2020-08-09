@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:talent_profile/bloc/profile_bloc.dart';
+
+import '../data/talent_profile_model.dart';
+import '../data/talent_profile_model.dart';
 
 class ProfileView extends StatefulWidget {
   ProfileView({Key key}) : super(key: key);
@@ -9,456 +14,467 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  double _screenHeight;
+  double _screenWidth;
+  TextStyle _headingTitleStyle;
+  TalentProfileModel profile;
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ProfileBloc>(context).add(GetProfile());
+  }
+
   @override
   Widget build(BuildContext context) {
-    double _screenHeight = MediaQuery.of(context).size.height;
-    double _screenWidth = MediaQuery.of(context).size.width;
+    _screenHeight = MediaQuery.of(context).size.height;
+    _screenWidth = MediaQuery.of(context).size.width;
+    // each heading title Style
+    _headingTitleStyle = TextStyle(
+        color: Colors.grey,
+        fontSize: _screenHeight * 0.023,
+        fontWeight: FontWeight.w800);
+    //print(TalentProfileModel().load());
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent[100],
-      appBar: AppBar(
-        elevation: 1,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {},
-          color: Colors.black,
+      body: SafeArea(
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is TalentProfileState) {
+              profile = state.profile;
+              return _scaffold();
+            }
+            return Container(
+              child: Center(child: Text("Loading")),
+            );
+          },
         ),
-        title: Container(
-          margin: const EdgeInsets.all(5),
-          height: _screenHeight / 100 * 6,
-          width: _screenWidth / 100 * 200,
-          alignment: Alignment.center,
+      ),
+    );
+  }
+
+  Widget _scaffold() {
+    return Container(
+      child: Column(children: [
+        _appBar(),
+        Container(
+          height: _screenHeight * 0.862,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: _screenHeight * 0.01),
+                _header(),
+                _spacer(_screenHeight * 0.035),
+                _aboutMe(),
+                _spacer(_screenHeight * 0.02),
+                _skillsWidget(),
+                _spacer(_screenHeight * 0.02),
+                _reviews()
+              ],
+            ),
+          ),
+        )
+      ]),
+    );
+  }
+
+  Widget _appBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _hamburger(),
+        Container(
+          width: _screenWidth * 0.7,
+          height: _screenHeight * 0.05,
+          padding: EdgeInsets.only(left: 20.0, bottom: 3.0),
           decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(10),
+            color: Colors.grey.withOpacity(0.15),
+            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 2.0),
+            borderRadius: BorderRadius.all(
+              Radius.circular(_screenWidth * 0.2),
+            ),
           ),
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
               child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Select artist type',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                ),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Select artist type",
+                      hintStyle: TextStyle(fontWeight: FontWeight.bold)))),
+        ),
+        Icon(
+          Icons.message,
+          size: _screenHeight * 0.05,
+        )
+      ],
+    );
+  }
+
+  Widget _header() {
+    return Stack(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Container(
+              height: _screenHeight / 100 * 21,
+              color: Colors.purple,
+              width: _screenWidth,
+            ),
+            Container(
+              height: _screenHeight / 100 * 22,
+              width: _screenWidth,
+              color: Colors.white,
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          RatingBarIndicator(
+                            rating: 4,
+                            itemBuilder: (context, index) => Icon(
+                              Icons.star,
+                              color: Colors.purple,
+                            ),
+                            itemCount: 5,
+                            itemSize: _screenWidth * 0.06,
+                            direction: Axis.horizontal,
+                          ),
+                          Text(
+                            '[15]',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: _screenWidth / 100 * 4,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              profile.name,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: _screenWidth / 100 * 5,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: _screenHeight * 0.008),
+                            Text(
+                              profile.profession,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: _screenWidth / 100 * 4,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: _screenHeight * 0.008),
+                            Text(
+                              profile.location,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: _screenWidth / 100 * 4,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                "${profile.price.toString()}\$",
+                                style: TextStyle(
+                                  fontSize: _screenWidth / 100 * 6,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {},
+                                iconSize: _screenWidth / 100 * 7,
+                              ),
+                            ],
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              height: _screenHeight / 100 * 4.5,
+                              width: _screenHeight / 100 * 11,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(_screenWidth * 0.012)),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.purpleAccent,
+                                    Colors.blueAccent
+                                  ],
+                                  begin: AlignmentDirectional.topStart,
+                                  end: AlignmentDirectional.bottomEnd,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'HIRE',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: _screenWidth / 100 * 4,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+        Positioned(
+          top: _screenHeight / 100 * 15,
+          left: _screenWidth / 100 * 6,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey,
               ),
             ),
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.chat_bubble_outline),
-            onPressed: () {},
-            color: Colors.black,
+      ],
+    );
+  }
+
+  Widget _aboutMe() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+          horizontal: 20.0, vertical: _screenHeight * 0.01),
+      height: _screenHeight / 100 * 20,
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'About me',
+                style: _headingTitleStyle,
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {},
+                iconSize: _screenWidth / 100 * 7,
+              ),
+            ],
+          ),
+          Text(
+            profile.bio.description,
+            style: TextStyle(
+              fontSize: _screenWidth / 100 * 4,
+              color: Colors.grey,
+            ),
+            softWrap: true,
+            textAlign: TextAlign.justify,
           ),
         ],
       ),
-      body: ListView(
+    );
+  }
+
+  Widget _skillsWidget() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      height: _screenHeight / 100 * 20,
+      color: Colors.white,
+      child: Column(
         children: <Widget>[
-          Container(
-            child: Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      height: _screenHeight / 100 * 21,
-                      color: Colors.purple,
-                      width: _screenWidth,
-                    ),
-                    Container(
-                      height: _screenHeight / 100 * 22,
-                      width: _screenWidth,
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  RatingBarIndicator(
-                                    rating: 4,
-                                    itemBuilder: (context, index) => Icon(
-                                      Icons.star,
-                                      color: Colors.purple,
-                                    ),
-                                    itemCount: 5,
-                                    itemSize: _screenWidth / 100 * 5,
-                                    direction: Axis.horizontal,
-                                  ),
-                                  Text(
-                                    '[15]',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: _screenWidth / 100 * 4,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'Arun Arora',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: _screenWidth / 100 * 4,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Graphic Designer',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: _screenWidth / 100 * 4,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Mumbai',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: _screenWidth / 100 * 4,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Text(
-                                        '12\$',
-                                        style: TextStyle(
-                                          fontSize: _screenWidth / 100 * 6,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () {},
-                                        iconSize: _screenWidth / 100 * 7,
-                                      ),
-                                    ],
-                                  ),
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: _screenHeight / 100 * 3.5,
-                                      width: _screenHeight / 100 * 9,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.purpleAccent,
-                                            Colors.blueAccent
-                                          ],
-                                          begin: AlignmentDirectional.topStart,
-                                          end: AlignmentDirectional.bottomEnd,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'HIRE',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: _screenWidth / 100 * 4,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                Positioned(
-                  top: _screenHeight / 100 * 15,
-                  left: _screenWidth / 100 * 6,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Skills',
+                style: _headingTitleStyle,
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {},
+                iconSize: _screenWidth / 100 * 7,
+              ),
+            ],
           ),
-          SizedBox(
-            height: _screenHeight / 100 * 3,
-          ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            height: _screenHeight / 100 * 20,
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'About me',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {},
-                      iconSize: _screenWidth / 100 * 7,
-                    ),
-                  ],
-                ),
-                Text(
-                  'hbsvhvbjsdbhvbsdbhdbsdhjbcjbdvhbsjbhvbdjbvhdsbcsdhbvjdbvhdbsdhbhdbjsbhbsjkdbvhsdb vsdvhbdvsdhv b',
+          Wrap(
+            spacing: 8.0, // gap between adjacent chips
+            runSpacing: 4.0, // gap between lines
+            children: profile.skills.map((e) => _skillCard(e.name)).toList(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _reviews() {
+    return Container(
+      color: Colors.white,
+      height: _screenHeight / 100 * 30,
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text('Reviews', style: _headingTitleStyle),
+              FlatButton(
+                child: Text(
+                  'See all',
                   style: TextStyle(
-                    fontSize: _screenWidth / 100 * 4,
-                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
                   ),
-                  softWrap: true,
-                  textAlign: TextAlign.justify,
                 ),
-              ],
-            ),
+                onPressed: () {},
+                // iconSize: _screenWidth / 100 * 7,
+              ),
+            ],
           ),
-          SizedBox(height: _screenHeight / 100 * 2),
-          Container(
-            color: Colors.white,
-            height: _screenHeight / 100 * 30,
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Work',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {},
-                      iconSize: _screenWidth / 100 * 7,
-                    ),
-                  ],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                height: 70,
+                width: 70,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
                 ),
-                Container(
-                  height: _screenHeight / 100 * 25,
-                  child: ListView.builder(
-                      itemCount: 5,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height: _screenHeight / 100 * 15,
-                          width: _screenWidth / 100 * 40,
-                          color: Colors.blue,
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Container(
-                                height: _screenHeight / 100 * 10,
-                                width: _screenWidth / 100 * 40,
-                                decoration: BoxDecoration(
-                                    // image: DecorationImage(
-                                    //   image: AssetImage('assetName'),
-                                    //   fit: BoxFit.cover,
-                                    // ),
-                                    color: Colors.red),
-                              ),
-                              Container(
-                                height: _screenHeight / 100 * 10,
-                                width: _screenWidth / 100 * 50,
-                                color: Colors.pink,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'Project name',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: _screenWidth / 100 * 3,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Project description',
-                                      style: TextStyle(
-                                        color: Colors.black26,
-                                        fontSize: _screenWidth / 100 * 3,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      }),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: _screenHeight / 100 * 2,
-          ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            height: _screenHeight / 100 * 20,
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Skills',
-                      style: TextStyle(color: Colors.grey),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: _screenWidth * 0.7,
+                    child: Text(
+                      profile.review.description,
+                      softWrap: true,
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: _screenWidth / 100 * 4,
+                      ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {},
-                      iconSize: _screenWidth / 100 * 7,
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: Row(
+                  ),
+                  SizedBox(
+                    height: _screenHeight * 0.01,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Chip(label: Text('Designing')),
-                      SizedBox(
-                        width: 20,
+                      Text(
+                        profile.review.author,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black26,
+                          fontSize: _screenWidth / 100 * 5,
+                        ),
                       ),
-                      Chip(label: Text('Photoshop')),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Chip(label: Text('CSS')),
-                      SizedBox(
-                        width: 20,
+                      SizedBox(width: _screenWidth / 100 * 22),
+                      RatingBarIndicator(
+                        rating: 4,
+                        itemBuilder: (context, index) => Icon(
+                          Icons.star,
+                          color: Colors.purple,
+                        ),
+                        itemCount: 5,
+                        itemSize: _screenWidth / 100 * 5,
+                        direction: Axis.horizontal,
                       ),
                     ],
                   ),
-                ),
-                Chip(label: Text('data')),
-                // SizedBox(
-                //   width: 20,
-                // ),
-              ],
-            ),
-          ),
-          SizedBox(height: _screenHeight / 100 * 2),
-          Container(
-            color: Colors.white,
-            height: _screenHeight / 100 * 30,
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Reviews',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    FlatButton(
-                      child: Text('See all'),
-                      onPressed: () {},
-                      // iconSize: _screenWidth / 100 * 7,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      height: 70,
-                      width: 70,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    SizedBox(
-                      width: _screenWidth / 100 * 4,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'hbvbfvbsjdbhdsbjvbfbzjdjsdnvjsdbff',
-                          softWrap: true,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: _screenWidth / 100 * 4,
-                          ),
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'Alexander',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black26,
-                                fontSize: _screenWidth / 100 * 4,
-                              ),
-                            ),
-                            SizedBox(width: _screenWidth / 100 * 22),
-                            RatingBarIndicator(
-                              rating: 4,
-                              itemBuilder: (context, index) => Icon(
-                                Icons.star,
-                                color: Colors.purple,
-                              ),
-                              itemCount: 5,
-                              itemSize: _screenWidth / 100 * 5,
-                              direction: Axis.horizontal,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _spacer(height) {
+    return Container(
+      color: Color(0XFFDBEAF2),
+      height: height,
+    );
+  }
+
+  Widget _hamburger() {
+    return InkWell(
+      onTap: () {},
+      child: Column(
+        children: [
+          _line(width: _screenWidth * 0.1),
+          SizedBox(height: _screenHeight * 0.005),
+          _line(width: _screenWidth * 0.1),
+          SizedBox(height: _screenHeight * 0.005),
+          Row(
+            children: [
+              SizedBox(
+                width: _screenWidth * 0.028,
+              ),
+              _line(width: _screenWidth * 0.07),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _line({width}) {
+    return Container(
+      height: _screenHeight * 0.005,
+      width: width,
+      decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.7),
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+    );
+  }
+
+  Widget _skillCard(text) {
+    return Chip(
+      backgroundColor: Colors.grey.withOpacity(0.7),
+      label: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: _screenHeight * 0.02,
+        ),
       ),
     );
   }

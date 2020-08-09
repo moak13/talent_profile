@@ -24,10 +24,11 @@ class TalentProfileModel {
     this.review,
   });
 
-  Future<TalentProfileModel> load() {
+  static Future<TalentProfileModel> load() {
     return rootBundle.loadStructuredData<TalentProfileModel>('assets/data.json',
         (jsonStr) async {
-      return TalentProfileModel.fromJson(json.decode(jsonStr));
+      var jsonData = json.decode(jsonStr);
+      return TalentProfileModel.fromMap(jsonData);
     });
   }
 
@@ -45,7 +46,7 @@ class TalentProfileModel {
     };
   }
 
-  factory TalentProfileModel.fromMap(Map<String, dynamic> map) {
+  factory TalentProfileModel.fromMap(map) {
     if (map == null) return null;
 
     return TalentProfileModel(
@@ -55,8 +56,8 @@ class TalentProfileModel {
       price: map['price'],
       rate: map['rate'],
       bio: Bio.fromMap(map['bio']),
-      works: List<Work>.from(map['works']?.map((x) => Work.fromMap(x))),
-      skills: List<Skills>.from(map['skills']?.map((x) => Skills.fromMap(x))),
+      works: List.from(map['work']?.map((x) => Work.fromMap(x))),
+      skills: List.from(map['skills']?.map((x) => Skills.fromMap(x))),
       review: Review.fromMap(map['review']),
     );
   }
